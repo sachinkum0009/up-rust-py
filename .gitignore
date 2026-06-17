@@ -15,3 +15,9 @@ target/
 
 .vscode/
 .idea/
+
+# Python related ignores
+__pycache__/
+
+# Compiled .so files
+*.so

@@ -1,0 +1,56 @@
+site_name: Up Py Rs
+site_description:  Provides python bindings for up-rust
+site_url: https://eclipse-uprotocol.github.io/up-rust-py/
+site_author: Sachin Kumar
+repo_url: https://github.com/eclipse-uprotocol/up-rust-py
+repo_name: up-rust-py
+
+theme:
+  name: material
+  font:
+    text: Roboto
+    code: Roboto Mono
+  # favicon: ./favicon.png
+  icon:
+    logo: material/protocol
+    previous: fontawesome/solid/angle-left
+    next: fontawesome/solid/angle-right
+  features:
+    - navigation.footer
+    - navigation.tabs
+    - navigation.sections
+    - toc.follow
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.select
+
+  palette:
+    # Light Mode
+    - scheme: default
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+      primary: blue
+      accent: pink
+
+    # Dark Mode
+    - scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+      primary: blue grey
+      accent: deep orange
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - API Reference: api.md

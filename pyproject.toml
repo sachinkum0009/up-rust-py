@@ -1,0 +1,59 @@
+[build-system]
+requires = ["maturin>=1.10,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "up-rust-py"
+requires-python = ">=3.10"
+description = "Python bindings for Eclipse uProtocol Rust implementation"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [
+    { name = "sachinkum0009" },
+]
+keywords = ["uprotocol", "automotive", "iot", "communication", "rust"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Networking",
+]
+dynamic = ["version"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/eclipse-uprotocol/up-rust-py"
+Documentation = "https://github.com/eclipse-uprotocol/up-rust-py#readme"
+Repository = "https://github.com/eclipse-uprotocol/up-rust-py"
+Issues = "https://github.com/eclipse-uprotocol/up-rust-py/issues"
+Changelog = "https://github.com/eclipse-uprotocol/up-rust-py/releases"
+
+[project.optional-dependencies]
+# Transport implementations
+zenoh = []  # Zenoh network transport (requires up-transport-zenoh-rust)
+
+# Convenience bundles
+all = [
+    "up-rust-py[zenoh]",
+]
+test = []  # Testing utilities (mockall, test-util features)
+
+[dependency-groups]
+dev = [
+    "maturin>=1.11.5",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.7.5",
+    "mkdocstrings[python]>=1.0.3",
+    "prek>=0.3.8",
+    "pytest==9.0.2",
+]

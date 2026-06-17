@@ -1,0 +1,23 @@
+[package]
+name = "up-rust-py"
+version = "0.1.2"
+edition = "2024"
+description = "It provides UProtocol binding to use in Python. It is built using Maturin and Pyo3"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "up_rust_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+async-trait = "0.1.89"
+protobuf = "3.7.2"
+pyo3 = { version = "0.23", features = ["abi3-py312", "abi3-py38", "extension-module"] }
+tokio = { version = "1.49.0", features = ["full"] }
+up-rust = { version = "0.9.0", features = ["communication", "util"] }
+up-transport-zenoh = { version = "0.9.0", optional = true }
+
+[features]
+zenoh = ["up-transport-zenoh"]
+all = ["zenoh"]
