@@ -1,0 +1,31 @@
+# ********************************************************************************
+#  Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+#  See the NOTICE file(s) distributed with this work for additional
+#  information regarding copyright ownership.
+#
+#  This program and the accompanying materials are made available under the
+#  terms of the Apache License Version 2.0 which is available at
+#  https://www.apache.org/licenses/LICENSE-2.0
+#
+#  SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************/
+
+# Config file for cargo deny
+# For all options see https://github.com/EmbarkStudios/cargo-deny/blob/main/deny.template.toml
+
+# If you add a license in the following section also consider changing about.toml
+[licenses]
+allow = ["Apache-2.0", "ISC", "MIT"]
+private = { ignore = true }
+exceptions = [{ name = "unicode-ident", allow = ["Unicode-3.0"] }]
+unused-allowed-license = "deny"
+
+[bans]
+multiple-versions = "deny"
+wildcards = "deny"
+skip-tree = [
+    { crate = "protobuf-codegen", reason = "this is only needed/used during the build process" },
+    { crate = "windows-sys", reason = "a foundational crate for many that bumps far too frequently to ever have a shared version" },
+    { crate = "wasip3", reason = "skipping this tree because it pulls in a conflicting version of wit-bindgen but we cannot disable support for it" },
+]
