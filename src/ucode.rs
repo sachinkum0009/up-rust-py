@@ -17,5 +17,6 @@ use up_rust::UCode as RustUCode;
 #[pyclass(name = "UClone")]
 #[derive(Clone)]
 pub struct UCode {
+    #[expect(dead_code)]
     pub(crate) inner: RustUCode,
 }

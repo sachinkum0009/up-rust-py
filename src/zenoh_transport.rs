@@ -26,6 +26,8 @@ use up_rust::UUri as RustUUri;
 use up_rust::{UListener, UMessage, UTransport};
 use up_transport_zenoh::{UPTransportZenoh as RustUPTransportZenoh, zenoh_config};
 
+type ListenerMap = HashMap<(RustUUri, Option<RustUUri>), Arc<PythonListener>>;
+
 /// Python wrapper for the Rust UPTransportZenoh
 ///
 /// Provides network transport capabilities using the Zenoh protocol.
@@ -34,7 +36,7 @@ use up_transport_zenoh::{UPTransportZenoh as RustUPTransportZenoh, zenoh_config}
 #[pyclass(name = "UPTransportZenoh")]
 pub struct UPTransportZenoh {
     pub(crate) transport: Arc<RustUPTransportZenoh>,
-    listeners: Arc<RwLock<HashMap<(RustUUri, Option<RustUUri>), Arc<PythonListener>>>>,
+    listeners: Arc<RwLock<ListenerMap>>,
 }
 
 #[pymethods]

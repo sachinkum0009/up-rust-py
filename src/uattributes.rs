@@ -36,7 +36,6 @@ impl UAttributes {
         })
     }
 
-
     fn get_type_(&self) -> Option<UMessageType> {
         self.inner
             .type_
@@ -45,20 +44,17 @@ impl UAttributes {
             .map(|rust_type_| UMessageType { inner: rust_type_ })
     }
 
-
     fn get_source(&self) -> Option<UUri> {
         self.inner.source.as_ref().map(|rust_source| UUri {
             inner: rust_source.clone(),
         })
     }
 
-
     fn get_sink(&self) -> Option<UUri> {
         self.inner.sink.as_ref().map(|rust_sink| UUri {
             inner: rust_sink.clone(),
         })
     }
-
 
     fn get_priority(&self) -> Option<UPriority> {
         self.inner
@@ -70,16 +66,13 @@ impl UAttributes {
             })
     }
 
-
     fn get_ttl(&self) -> Option<u32> {
         self.inner.ttl
     }
 
-
     fn get_permission_level(&self) -> Option<u32> {
         self.inner.permission_level
     }
-
 
     fn get_commstatus(&self) -> Option<UCode> {
         self.inner
@@ -92,23 +85,19 @@ impl UAttributes {
             })
     }
 
-
     fn get_reqid(&self) -> Option<UUID> {
         self.inner.reqid.as_ref().map(|rust_reqid| UUID {
             inner: rust_reqid.clone(),
         })
     }
 
-
     fn get_token(&self) -> Option<String> {
         self.inner.token.clone()
     }
 
-
     fn get_traceparent(&self) -> Option<String> {
         self.inner.traceparent.clone()
     }
-
 
     fn get_payload_format(&self) -> Option<UPayloadFormat> {
         self.inner
@@ -124,6 +113,7 @@ impl UAttributes {
 #[pyclass(name = "UMessageType")]
 #[derive(Clone)]
 pub struct UMessageType {
+    #[expect(dead_code)]
     pub(crate) inner: RustUMessageType,
 }
 
@@ -140,6 +130,7 @@ pub struct UMessageType {
 #[pyclass(name = "UPriority")]
 #[derive(Clone)]
 pub struct UPriority {
+    #[expect(dead_code)]
     pub(crate) inner: RustUPriority,
 }
 
@@ -149,6 +140,7 @@ impl UPriority {}
 #[pyclass(name = "UPayloadFormat")]
 #[derive(Clone)]
 pub struct UPayloadFormat {
+    #[expect(dead_code)]
     pub(crate) inner: RustUPayloadFormat,
 }
 

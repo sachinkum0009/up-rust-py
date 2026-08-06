@@ -31,6 +31,8 @@ use std::sync::Arc;
 
 create_exception!(up_rust_py, UStatusError, PyException);
 
+type ListenerMap = HashMap<(RustUUri, Option<RustUUri>), Arc<PythonListener>>;
+
 fn map_ustatus_error(context: &str, status: up_rust::UStatus) -> PyErr {
     let code = status.get_code();
     let code_name = format!("{:?}", code);
@@ -179,7 +181,7 @@ impl StaticUriProvider {
 #[pyclass]
 pub struct LocalTransport {
     pub(crate) inner: Arc<RustLocalTransport>,
-    listeners: Arc<RwLock<HashMap<(RustUUri, Option<RustUUri>), Arc<PythonListener>>>>,
+    listeners: Arc<RwLock<ListenerMap>>,
 }
 
 #[pymethods]

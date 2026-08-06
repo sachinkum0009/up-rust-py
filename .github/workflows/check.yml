@@ -177,7 +177,7 @@ jobs:
         feature-flags:
           [
             "",
-            "--features protobuf-support,up-l2-api",
+            # "--features protobuf-support,up-l2-api", # NOTE: this feature is not implemented for up-rust-py
             "--all-features",
           ]
     steps:
