@@ -25,6 +25,7 @@ use protobuf::well_known_types::wrappers::StringValue;
 use pyo3::create_exception;
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
+use pyo3::types::PyAny;
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::sync::Arc;
@@ -37,7 +38,7 @@ fn map_ustatus_error(context: &str, status: up_rust::UStatus) -> PyErr {
     let status_message = status.get_message();
     let full_message = format!("{}: {} (code={})", context, status_message, code_name);
 
-    Python::with_gil(|py| {
+    Python::attach(|py| {
         let err = PyErr::new::<UStatusError, _>(full_message);
         let err_value = err.value(py);
         let _ = err_value.setattr("code", code_name.clone());
@@ -48,13 +49,13 @@ fn map_ustatus_error(context: &str, status: up_rust::UStatus) -> PyErr {
 
 /// Internal struct to bridge Python callbacks to Rust UListener trait
 struct PythonListener {
-    callback: PyObject,
+    callback: Py<PyAny>,
 }
 
 #[async_trait::async_trait]
 impl RustUListener for PythonListener {
     async fn on_receive(&self, msg: RustUMessage) {
-        Python::with_gil(|py| {
+        Python::attach(|py| {
             let py_msg = crate::local_transport::UMessage { inner: msg };
 
             if let Err(e) = self.callback.call1(py, (py_msg,)) {
@@ -68,7 +69,7 @@ impl RustUListener for PythonListener {
 ///
 /// UMessage encapsulates both the payload and metadata for a uProtocol communication.
 /// It is typically received by listener callbacks.
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct UMessage {
     pub(crate) inner: RustUMessage,
@@ -114,7 +115,7 @@ impl UMessage {
 }
 
 /// UUri class
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone, Hash, PartialEq, Eq)]
 pub struct UUri {
     pub inner: RustUUri,
@@ -226,7 +227,7 @@ impl LocalTransport {
         py: Python<'_>,
         source_filter: &UUri,
         sink_filter: Option<&UUri>,
-        listener: PyObject,
+        listener: Py<PyAny>,
     ) -> PyResult<()> {
         let rust_listener = Arc::new(PythonListener {
             callback: listener.clone_ref(py),
@@ -270,7 +271,7 @@ impl LocalTransport {
         py: Python<'_>,
         source_filter: &UUri,
         sink_filter: Option<&UUri>,
-        listener: PyObject,
+        listener: Py<PyAny>,
     ) -> PyResult<()> {
         let _ = (py, listener);
         let key = (

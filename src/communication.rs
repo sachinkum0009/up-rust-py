@@ -78,7 +78,7 @@ impl TransportType {
 ///
 /// UPayload encapsulates the data being transmitted in a uProtocol message.
 /// It can be created from strings or raw bytes.
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct UPayload {
     inner: RustUPayload,
@@ -219,13 +219,13 @@ impl SimplePublisher {
 
 /// Internal struct to bridge Python callbacks to Rust UListener trait for notifications
 struct PythonNotificationListener {
-    callback: PyObject,
+    callback: Py<PyAny>,
 }
 
 #[async_trait::async_trait]
 impl UListener for PythonNotificationListener {
     async fn on_receive(&self, msg: RustUMessage) {
-        Python::with_gil(|py| {
+        Python::attach(|py| {
             let py_msg = crate::local_transport::UMessage { inner: msg };
             if let Err(e) = self.callback.call1(py, (py_msg,)) {
                 eprintln!("Error calling Python notification callback: {:?}", e);
@@ -241,7 +241,7 @@ fn map_registration_error(context: &str, err: RustRegistrationError) -> PyErr {
                 "{}: a listener for the given filter criteria already exists",
                 context
             );
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let py_err = PyErr::new::<RegistrationError, _>(full_message);
                 let err_value = py_err.value(py);
                 let _ = err_value.setattr("kind", "ALREADY_EXISTS");
@@ -251,7 +251,7 @@ fn map_registration_error(context: &str, err: RustRegistrationError) -> PyErr {
         }
         RustRegistrationError::NoSuchListener => {
             let full_message = format!("{}: no listener registered for given pattern", context);
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let py_err = PyErr::new::<RegistrationError, _>(full_message);
                 let err_value = py_err.value(py);
                 let _ = err_value.setattr("kind", "NOT_FOUND");
@@ -261,7 +261,7 @@ fn map_registration_error(context: &str, err: RustRegistrationError) -> PyErr {
         }
         RustRegistrationError::MaxListenersExceeded => {
             let full_message = format!("{}: maximum number of listeners has been reached", context);
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let py_err = PyErr::new::<RegistrationError, _>(full_message);
                 let err_value = py_err.value(py);
                 let _ = err_value.setattr("kind", "RESOURCE_EXHAUSTED");
@@ -275,7 +275,7 @@ fn map_registration_error(context: &str, err: RustRegistrationError) -> PyErr {
                 "{}: the underlying transport implementation does not support the push delivery method",
                 context
             );
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let py_err = PyErr::new::<RegistrationError, _>(full_message);
                 let err_value = py_err.value(py);
                 let _ = err_value.setattr("kind", "UNIMPLEMENTED");
@@ -288,7 +288,7 @@ fn map_registration_error(context: &str, err: RustRegistrationError) -> PyErr {
         }
         RustRegistrationError::InvalidFilter(msg) => {
             let full_message = format!("{}: invalid filter(s): {}", context, msg);
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let py_err = PyErr::new::<RegistrationError, _>(full_message);
                 let err_value = py_err.value(py);
                 let _ = err_value.setattr("kind", "INVALID_FILTER");
@@ -301,7 +301,7 @@ fn map_registration_error(context: &str, err: RustRegistrationError) -> PyErr {
             let code_name = format!("{:?}", code);
             let status_message = status.get_message();
             let full_message = format!("{}: {} (code={})", context, status_message, code_name);
-            Python::with_gil(|py| {
+            Python::attach(|py| {
                 let py_err = PyErr::new::<RegistrationError, _>(full_message);
                 let err_value = py_err.value(py);
                 let _ = err_value.setattr("kind", "UNKNOWN");
@@ -372,7 +372,7 @@ impl SimpleNotifier {
         &mut self,
         py: Python<'_>,
         topic: &UUri,
-        callback: PyObject,
+        callback: Py<PyAny>,
     ) -> PyResult<()> {
         let topic_key = format!("{:?}", topic.inner);
 
@@ -409,7 +409,7 @@ impl SimpleNotifier {
     ///
     /// Example:
     ///     >>> notifier.stop_listening(topic, notification_handler)
-    fn stop_listening(&mut self, _py: Python, topic: &UUri, _callback: PyObject) -> PyResult<()> {
+    fn stop_listening(&mut self, _py: Python, topic: &UUri, _callback: Py<PyAny>) -> PyResult<()> {
         // Create the same key used during registration
         let topic_key = format!("{:?}", topic.inner);
 
