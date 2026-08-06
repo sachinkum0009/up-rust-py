@@ -14,7 +14,7 @@
 use pyo3::prelude::*;
 use up_rust::UUID as RustUUID;
 
-#[pyclass(name = "UUID")]
+#[pyclass(from_py_object, name = "UUID")]
 #[derive(Clone)]
 pub struct UUID {
     pub(crate) inner: RustUUID,

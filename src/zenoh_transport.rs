@@ -20,6 +20,7 @@ use crate::{communication::get_runtime, local_transport::UUri};
 
 use pyo3::exceptions::PyException;
 use pyo3::prelude::*;
+use pyo3::types::PyAny;
 use std::{collections::HashMap, sync::Arc};
 use tokio::sync::RwLock;
 use up_rust::UUri as RustUUri;
@@ -110,7 +111,7 @@ impl UPTransportZenoh {
         py: Python<'_>,
         source_filter: &UUri,
         sink_filter: Option<&UUri>,
-        listener: PyObject,
+        listener: Py<PyAny>,
     ) -> PyResult<()> {
         let rust_listener = Arc::new(PythonListener {
             callback: listener.clone_ref(py),
@@ -158,7 +159,7 @@ impl UPTransportZenoh {
         py: Python<'_>,
         source_filter: &UUri,
         sink_filter: Option<&UUri>,
-        listener: PyObject,
+        listener: Py<PyAny>,
     ) -> PyResult<()> {
         let _ = (py, listener);
         let key = (
@@ -229,13 +230,13 @@ impl UPTransportZenohBuilder {
 
 /// Bridges Python callable to Rust UListener trait
 struct PythonListener {
-    callback: PyObject,
+    callback: Py<PyAny>,
 }
 
 #[async_trait::async_trait]
 impl UListener for PythonListener {
     async fn on_receive(&self, msg: UMessage) {
-        Python::with_gil(|py| {
+        Python::attach(|py| {
             let py_msg = crate::local_transport::UMessage { inner: msg };
 
             if let Err(e) = self.callback.call1(py, (py_msg,)) {

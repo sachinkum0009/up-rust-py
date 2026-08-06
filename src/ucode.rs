@@ -14,7 +14,7 @@
 use pyo3::prelude::*;
 use up_rust::UCode as RustUCode;
 
-#[pyclass(name = "UClone")]
+#[pyclass(from_py_object, name = "UClone")]
 #[derive(Clone)]
 pub struct UCode {
     #[expect(dead_code)]

@@ -22,7 +22,7 @@ use crate::ucode::UCode;
 use crate::uuid::UUID;
 
 /// UAttributes class
-#[pyclass]
+#[pyclass(from_py_object)]
 #[derive(Clone)]
 pub struct UAttributes {
     pub(crate) inner: RustUAttributes,
@@ -110,7 +110,7 @@ impl UAttributes {
     }
 }
 
-#[pyclass(name = "UMessageType")]
+#[pyclass(from_py_object, name = "UMessageType")]
 #[derive(Clone)]
 pub struct UMessageType {
     #[expect(dead_code)]
@@ -127,7 +127,7 @@ pub struct UMessageType {
 //     }
 // }
 
-#[pyclass(name = "UPriority")]
+#[pyclass(from_py_object, name = "UPriority")]
 #[derive(Clone)]
 pub struct UPriority {
     #[expect(dead_code)]
@@ -137,7 +137,7 @@ pub struct UPriority {
 // TODO(Sachin): Handle the parsing of enum
 impl UPriority {}
 
-#[pyclass(name = "UPayloadFormat")]
+#[pyclass(from_py_object, name = "UPayloadFormat")]
 #[derive(Clone)]
 pub struct UPayloadFormat {
     #[expect(dead_code)]
